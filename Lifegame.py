@@ -5,7 +5,7 @@ from PIL import Image
 import ui, io
 from time import sleep
 
-import LifegameObject1_1
+import LifegameObject
 
 class LifegameField():
 
@@ -84,8 +84,8 @@ class LifegameField():
 
 		for j in range(lenY):
 			for i in range(lenX):
-				self.field[orgY + j][orgX + i] = \
-					object[lenY - 1 - j][i]
+				self.field[orgY - lenY + j][orgX + i] = \
+					object[j][i]
 
 
 	def myGlider(self):
@@ -135,10 +135,9 @@ class MyScene(Scene):
 		self.modeEdit = False
 		self.field = LifegameField(self.size.x, self.size.y - self.intLowerMargin - self.intUpperMargin)
 
-		self.field.mySetObject(100,50,self.field.myGridergun())
+		self.field.mySetObject(180,330,self.field.myAcorn())
 		
-		self.field.mySetObject(50,50,self.field.myGridergun())
-		
+		#self.flgStop = True
 		#for i in range(300):
 		#	self.field.field[250][25 + i] = True
 
@@ -228,20 +227,23 @@ class MyScene(Scene):
 		
 		if y < 50:
 			if self.size.x - 50 < x :
+				self.parts_node.remove_from_parent()
 				self.modeEdit = False
 				self.flgStop = False
+				self.field.mySetObject(self.parts_node.position[0],self.parts_node.position[1] - self.intLowerMargin, self.object_add)
 			if x < 50 and self.modeEdit == False:
 				
 				self.modeEdit = True
 				self.flgStop = True
 				#draw object
-				part_img = Image.fromarray((1 - LifegameObject1_1.data2bool(LifegameObject1_1.Glider).astype(dtype=np.uint8)) * 255)
+				self.object_add = LifegameObject.data2bool(LifegameObject.Glidergun).astype(dtype=np.uint8)
+				part_img = Image.fromarray((1 - self.object_add) * 128 + 63)
 				pilimgfile = io.BytesIO()
 				part_img.save(pilimgfile, format='png')
 				bytes_img = pilimgfile.getvalue()
 				uiimg = ui.Image.from_data(bytes_img)
 				texture = Texture(uiimg)
-				self.parts_node = SpriteNode(texture, anchor_point=(0.5,0.5), position=self.size / 2, z_position=1)
+				self.parts_node = SpriteNode(texture, anchor_point=(0,0), position=self.size / 2, z_position=1)
 				self.add_child(self.parts_node)
 				
 				self.parts_node.margin = self.parts_node.size * 0.4
@@ -254,6 +256,7 @@ class MyScene(Scene):
 		if self.modeEdit == True:
 			self.partsBase = self.parts_node.position
 			self.touchBase = touch.location
+			
 
 	def touch_moved(self, touch):
 		if self.modeEdit == True:
@@ -266,6 +269,8 @@ class MyScene(Scene):
 			target.y = int(max(-self.parts_node.margin.y, min(self.size.y + self.parts_node.margin.y, target.y)))
 			self.parts_node.position = target
 			
+			self.posPartX.text = str(target.x)
+			self.posPartY.text = str(target.y - self.intLowerMargin)
 			#self.lblTouchMovedX.text = str(target.x)
 			#self.lblTouchMovedY.text = str(target.y)
 
