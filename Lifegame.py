@@ -153,12 +153,14 @@ class MyScene(Scene):
 
 		# SpriteNodeを使い、スクリーンに追加する
 		#self.field_node = SpriteNode(texture, position=self.size/2)
-		self.field_node = SpriteNode(texture, anchor_point=(0,0), position=(0, self.intLowerMargin))
-
-		self.add_child(self.field_node)
+		self.field_node = SpriteNode(
+			texture,
+			anchor_point=(0,0),
+			position=(0, self.intLowerMargin),
+			parent=self)
 		
 		# add labels
-		self.lblGen = LabelNode(\
+		self.lblGen = LabelNode(
 			str(self.field.gen),
 			font=('Helvetica', 12),
 			anchor_point=(0,0),
@@ -166,7 +168,7 @@ class MyScene(Scene):
 			color='blue',
 			parent=self)
 		
-		self.lblPoplation = LabelNode(\
+		self.lblPoplation = LabelNode(
 			str(self.field.field.sum()),
 			font=('Helvetica', 12),
 			anchor_point=(0,0),
@@ -176,7 +178,7 @@ class MyScene(Scene):
 			parent=self
 			)
 		
-		self.lblMsg = LabelNode(\
+		self.lblMsg = LabelNode(
 			str(self.size[0]) + ':' + str(self.size[1]), font=('Helvetica', 12),
 			anchor_point=(0,0),
 			position=(180,0),
@@ -184,17 +186,17 @@ class MyScene(Scene):
 			color='blue',
 			parent=self)
 		
-		self.posPartX = LabelNode(\
+		self.posPartX = LabelNode(
 			'posPartX', 
-			font=('Haelvetica', 12),
+			font=('Helvetica', 12),
 			anchor_point=(0,0),
 			position=(0,15),
 			z_position=2,
 			color='blue',
 			parent=self)
-		self.posPartY = LabelNode(\
+		self.posPartY = LabelNode(
 			'posPartY', 
-			font=('Haelvetica', 12),
+			font=('Helvetica', 12),
 			anchor_point=(0,0),
 			position=(50,15),
 			z_position=2,
@@ -202,14 +204,14 @@ class MyScene(Scene):
 			parent=self)
 		
 		#add control areas
-		self.btnEditOnBak = ShapeNode(\
+		self.btnEditOnBak = ShapeNode(
 			path=ui.Path.rounded_rect(0,0,50,50,5),
 			color='#c4e6ff',
 			anchor_point=(0.5,0.5),
 			position=(25,25),
 			parent=self)
 		
-		self.btnEditOn = SpriteNode(\
+		self.btnEditOn = SpriteNode(
 			'iob:settings_32',
 			anchor_point=(0.5,0.5),
 			position=(25,25),
