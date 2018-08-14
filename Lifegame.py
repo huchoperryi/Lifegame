@@ -129,6 +129,7 @@ class LifegameField():
 class MyScene(Scene):
 	
 	def setup(self):
+		# Set parameter
 		self.flgStop = False
 		self.intLowerMargin = 50
 		self.intUpperMargin = 150
@@ -156,52 +157,85 @@ class MyScene(Scene):
 
 		self.add_child(self.field_node)
 		
-		self.lblGen = LabelNode(str(self.field.gen), font=('Helvetica', 12))
-		self.lblGen.anchor_point = (0,0)
+		# add labels
+		self.lblGen = LabelNode(\
+			str(self.field.gen),
+			font=('Helvetica', 12),
+			anchor_point=(0,0),
+			z_position=2,
+			color='blue',
+			parent=self)
 		
-		self.add_child(self.lblGen)
+		self.lblPoplation = LabelNode(\
+			str(self.field.field.sum()),
+			font=('Helvetica', 12),
+			anchor_point=(0,0),
+			position=(70,0),
+			z_position=2,
+			color='blue',
+			parent=self
+			)
 		
-		self.lblPoplation = LabelNode(str(self.field.field.sum()), font=('Helvetica', 12))
-		self.lblPoplation.anchor_point = (0,0)
-		self.lblPoplation.position = (70, 0)
-		self.add_child(self.lblPoplation)
-		
-		self.lblMsg = LabelNode(str(self.size[0]) + ':' + str(self.size[1]), font=('Helvetica', 12))
-		self.lblMsg.anchor_point = (0,0)
-		self.lblMsg.position = (180, 0)
-		self.add_child(self.lblMsg)
+		self.lblMsg = LabelNode(\
+			str(self.size[0]) + ':' + str(self.size[1]), font=('Helvetica', 12),
+			anchor_point=(0,0),
+			position=(180,0),
+			z_position=2,
+			color='blue',
+			parent=self)
 		
 		self.posPartX = LabelNode(\
 			'posPartX', 
 			font=('Haelvetica', 12),
 			anchor_point=(0,0),
 			position=(0,15),
+			z_position=2,
+			color='blue',
 			parent=self)
 		self.posPartY = LabelNode(\
 			'posPartY', 
 			font=('Haelvetica', 12),
 			anchor_point=(0,0),
 			position=(50,15),
+			z_position=2,
+			color='blue',
 			parent=self)
 		
-		'''
-		#test
-		part_img = Image.fromarray((1 - LifegameObject1_1.data2bool(LifegameObject1_1.Glidergun).astype(dtype=np.uint8)) * 255)
-		part_img.show()
-		pilimgfile = io.BytesIO()
-		part_img.save(pilimgfile, format='png')
-		bytes_img = pilimgfile.getvalue()
-		uiimg = ui.Image.from_data(bytes_img)
-		texture = Texture(uiimg)
-		self.parts_node = SpriteNode(texture, anchor_point=(0,0), position=(0,45), z_position=1)
-		self.add_child(self.parts_node)
-		'''
+		#add control areas
+		self.btnEditOnBak = ShapeNode(\
+			path=ui.Path.rounded_rect(0,0,50,50,5),
+			color='#c4e6ff',
+			anchor_point=(0.5,0.5),
+			position=(25,25),
+			parent=self)
+		
+		self.btnEditOn = SpriteNode(\
+			'iob:settings_32',
+			anchor_point=(0.5,0.5),
+			position=(25,25),
+			z_position=1.0,
+			parent=self)
+			
+		self.btnEditSubmitBak = ShapeNode(\
+			path=ui.Path.rounded_rect(0,0,50,50,5),
+			fill_color='#c4e6ff',
+			anchor_point=(0.5,0.5),
+			position=(350,25),
+			parent=self)
+		
+		self.btnEditSubmit = SpriteNode(\
+			'iob:arrow_right_b_32',
+			anchor_point=(0.5,0.5),
+			position=(350,25),
+			parent=self)
+		
 
 	def update(self):
 		if not(self.flgStop):
 			self.field_node.remove_from_parent()
 
 			self.field.field = self.field.update()
+			
 		pil_img = self.field.fieldImg()
 
 		pilimgfile = io.BytesIO()
