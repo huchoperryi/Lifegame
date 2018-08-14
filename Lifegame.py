@@ -5,7 +5,7 @@ from PIL import Image
 import ui, io
 from time import sleep
 
-import LifegameObject1_1
+import LifegameObject
 
 class LifegameField():
 
@@ -84,8 +84,8 @@ class LifegameField():
 
 		for j in range(lenY):
 			for i in range(lenX):
-				self.field[orgY + j][orgX + i] = \
-					object[lenY - 1 - j][i]
+				self.field[orgY - lenY + j][orgX + i] = \
+					object[j][i]
 
 
 	def myGlider(self):
@@ -129,16 +129,16 @@ class LifegameField():
 class MyScene(Scene):
 	
 	def setup(self):
+		# Set parameter
 		self.flgStop = False
 		self.intLowerMargin = 50
 		self.intUpperMargin = 150
 		self.modeEdit = False
 		self.field = LifegameField(self.size.x, self.size.y - self.intLowerMargin - self.intUpperMargin)
 
-		self.field.mySetObject(100,50,self.field.myGridergun())
+		self.field.mySetObject(180,330,self.field.myAcorn())
 		
-		self.field.mySetObject(50,50,self.field.myGridergun())
-		
+		#self.flgStop = True
 		#for i in range(300):
 		#	self.field.field[250][25 + i] = True
 
@@ -157,52 +157,85 @@ class MyScene(Scene):
 
 		self.add_child(self.field_node)
 		
-		self.lblGen = LabelNode(str(self.field.gen), font=('Helvetica', 12))
-		self.lblGen.anchor_point = (0,0)
+		# add labels
+		self.lblGen = LabelNode(\
+			str(self.field.gen),
+			font=('Helvetica', 12),
+			anchor_point=(0,0),
+			z_position=2,
+			color='blue',
+			parent=self)
 		
-		self.add_child(self.lblGen)
+		self.lblPoplation = LabelNode(\
+			str(self.field.field.sum()),
+			font=('Helvetica', 12),
+			anchor_point=(0,0),
+			position=(70,0),
+			z_position=2,
+			color='blue',
+			parent=self
+			)
 		
-		self.lblPoplation = LabelNode(str(self.field.field.sum()), font=('Helvetica', 12))
-		self.lblPoplation.anchor_point = (0,0)
-		self.lblPoplation.position = (70, 0)
-		self.add_child(self.lblPoplation)
-		
-		self.lblMsg = LabelNode(str(self.size[0]) + ':' + str(self.size[1]), font=('Helvetica', 12))
-		self.lblMsg.anchor_point = (0,0)
-		self.lblMsg.position = (180, 0)
-		self.add_child(self.lblMsg)
+		self.lblMsg = LabelNode(\
+			str(self.size[0]) + ':' + str(self.size[1]), font=('Helvetica', 12),
+			anchor_point=(0,0),
+			position=(180,0),
+			z_position=2,
+			color='blue',
+			parent=self)
 		
 		self.posPartX = LabelNode(\
 			'posPartX', 
 			font=('Haelvetica', 12),
 			anchor_point=(0,0),
 			position=(0,15),
+			z_position=2,
+			color='blue',
 			parent=self)
 		self.posPartY = LabelNode(\
 			'posPartY', 
 			font=('Haelvetica', 12),
 			anchor_point=(0,0),
 			position=(50,15),
+			z_position=2,
+			color='blue',
 			parent=self)
 		
-		'''
-		#test
-		part_img = Image.fromarray((1 - LifegameObject1_1.data2bool(LifegameObject1_1.Glidergun).astype(dtype=np.uint8)) * 255)
-		part_img.show()
-		pilimgfile = io.BytesIO()
-		part_img.save(pilimgfile, format='png')
-		bytes_img = pilimgfile.getvalue()
-		uiimg = ui.Image.from_data(bytes_img)
-		texture = Texture(uiimg)
-		self.parts_node = SpriteNode(texture, anchor_point=(0,0), position=(0,45), z_position=1)
-		self.add_child(self.parts_node)
-		'''
+		#add control areas
+		self.btnEditOnBak = ShapeNode(\
+			path=ui.Path.rounded_rect(0,0,50,50,5),
+			color='#c4e6ff',
+			anchor_point=(0.5,0.5),
+			position=(25,25),
+			parent=self)
+		
+		self.btnEditOn = SpriteNode(\
+			'iob:settings_32',
+			anchor_point=(0.5,0.5),
+			position=(25,25),
+			z_position=1.0,
+			parent=self)
+			
+		self.btnEditSubmitBak = ShapeNode(\
+			path=ui.Path.rounded_rect(0,0,50,50,5),
+			fill_color='#c4e6ff',
+			anchor_point=(0.5,0.5),
+			position=(350,25),
+			parent=self)
+		
+		self.btnEditSubmit = SpriteNode(\
+			'iob:arrow_right_b_32',
+			anchor_point=(0.5,0.5),
+			position=(350,25),
+			parent=self)
+		
 
 	def update(self):
 		if not(self.flgStop):
 			self.field_node.remove_from_parent()
 
 			self.field.field = self.field.update()
+			
 		pil_img = self.field.fieldImg()
 
 		pilimgfile = io.BytesIO()
@@ -228,20 +261,23 @@ class MyScene(Scene):
 		
 		if y < 50:
 			if self.size.x - 50 < x :
+				self.parts_node.remove_from_parent()
 				self.modeEdit = False
 				self.flgStop = False
+				self.field.mySetObject(self.parts_node.position[0],self.parts_node.position[1] - self.intLowerMargin, self.object_add)
 			if x < 50 and self.modeEdit == False:
 				
 				self.modeEdit = True
 				self.flgStop = True
 				#draw object
-				part_img = Image.fromarray((1 - LifegameObject1_1.data2bool(LifegameObject1_1.Glider).astype(dtype=np.uint8)) * 255)
+				self.object_add = LifegameObject.data2bool(LifegameObject.Glidergun).astype(dtype=np.uint8)
+				part_img = Image.fromarray((1 - self.object_add) * 128 + 63)
 				pilimgfile = io.BytesIO()
 				part_img.save(pilimgfile, format='png')
 				bytes_img = pilimgfile.getvalue()
 				uiimg = ui.Image.from_data(bytes_img)
 				texture = Texture(uiimg)
-				self.parts_node = SpriteNode(texture, anchor_point=(0.5,0.5), position=self.size / 2, z_position=1)
+				self.parts_node = SpriteNode(texture, anchor_point=(0,0), position=self.size / 2, z_position=1)
 				self.add_child(self.parts_node)
 				
 				self.parts_node.margin = self.parts_node.size * 0.4
@@ -254,6 +290,7 @@ class MyScene(Scene):
 		if self.modeEdit == True:
 			self.partsBase = self.parts_node.position
 			self.touchBase = touch.location
+			
 
 	def touch_moved(self, touch):
 		if self.modeEdit == True:
@@ -266,6 +303,8 @@ class MyScene(Scene):
 			target.y = int(max(-self.parts_node.margin.y, min(self.size.y + self.parts_node.margin.y, target.y)))
 			self.parts_node.position = target
 			
+			self.posPartX.text = str(target.x)
+			self.posPartY.text = str(target.y - self.intLowerMargin)
 			#self.lblTouchMovedX.text = str(target.x)
 			#self.lblTouchMovedY.text = str(target.y)
 
