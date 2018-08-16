@@ -131,8 +131,10 @@ class PartsFloat(SpriteNode):
 	
 	def __init__(self, data_object, **kwargs):
 		
+		#set parameter
 		self.mirror = ''
 		self.data_object = data_object
+		
 		#draw object
 		self.blAddObject = LifegameObject.data2bool(data_object).astype(dtype=np.uint8)
 		part_img = Image.fromarray((1 - self.blAddObject) * 128 + 63)
@@ -361,7 +363,7 @@ class MyScene(Scene):
 			
 		self.btn7Bak = ShapeNode(
 			path=ui.Path.rounded_rect(0,0,44,50,5),
-			fill_color='#c4e6ff',
+			fill_color='#a0a0a0',
 			anchor_point=(0.5,0.5),
 			position=(337,25),
 			parent=self)
@@ -373,7 +375,20 @@ class MyScene(Scene):
 			parent=self)
 		
 	def button0_push(self):
-		pass
+		
+		self.modeEdit = True
+		self.flgStop = True
+		#draw object
+		self.parts_node = PartsFloat(LifegameObject.Glidergun, parent=self)
+		self.modeEdit = True
+				
+		self.btn1Bak.fill_color='#c4e6ff'
+		self.btn2Bak.fill_color='#c4e6ff'
+		self.btn3Bak.fill_color='#c4e6ff'
+		self.btn4Bak.fill_color='#c4e6ff'
+		self.btn5Bak.fill_color='#c4e6ff'
+		self.btn6Bak.fill_color='#c4e6ff'
+		self.btn7Bak.fill_color='#c4e6ff'
 		
 	def button1_push(self):
 		
@@ -397,6 +412,22 @@ class MyScene(Scene):
 	
 	def button6_push(self):
 		pass
+		
+	def button7_push(self):
+		
+		if self.modeEdit == True:
+			self.parts_node.remove_from_parent()
+			self.modeEdit = False
+			self.flgStop = False
+			self.field.mySetObject(self.parts_node.position[0],self.parts_node.position[1] - self.intLowerMargin, self.parts_node.blAddObject)
+			
+			self.btn1Bak.fill_color='#a0a0a0'
+			self.btn2Bak.fill_color='#a0a0a0'
+			self.btn3Bak.fill_color='#a0a0a0'
+			self.btn4Bak.fill_color='#a0a0a0'
+			self.btn5Bak.fill_color='#a0a0a0'
+			self.btn6Bak.fill_color='#a0a0a0'
+			self.btn7Bak.fill_color='#a0a0a0'
 	
 	def update(self):
 		if not(self.flgStop):
@@ -433,33 +464,19 @@ class MyScene(Scene):
 		
 		if y < 50:
 			if self.size.x - 50 < x :
+				
+				pass
+				'''
 				self.parts_node.remove_from_parent()
 				self.modeEdit = False
 				self.flgStop = False
 				self.field.mySetObject(self.parts_node.position[0],self.parts_node.position[1] - self.intLowerMargin, self.parts_node.blAddObject)
-			
+				'''
 			
 			if x < 45 and self.modeEdit == False:
 				
-				self.modeEdit = True
-				self.flgStop = True
-				#draw object
-				self.parts_node = PartsFloat(LifegameObject.Glidergun, parent=self)
-				'''
-				self.object_add = LifegameObject.data2bool(LifegameObject.Glidergun).astype(dtype=np.uint8)
-				part_img = Image.fromarray((1 - self.object_add) * 128 + 63)
-				pilimgfile = io.BytesIO()
-				part_img.save(pilimgfile, format='png')
-				bytes_img = pilimgfile.getvalue()
-				uiimg = ui.Image.from_data(bytes_img)
-				texture = Texture(uiimg)
-				self.parts_node = SpriteNode(texture, anchor_point=(0,0), position=self.size / 2, z_position=1)
-				self.add_child(self.parts_node)
+				self.button0_push()
 				
-				self.parts_node.margin = self.parts_node.size * 0.4
-				'''
-				
-				self.modeEdit = True
 			elif 45 < x and x < 90:
 				self.button1_push()
 				
@@ -475,6 +492,11 @@ class MyScene(Scene):
 			elif 225 <= x and x < 270:
 				self.button5_push()
 				
+			elif 270 <= x and x < 315:
+				self.button6_push()
+				
+			elif 315 <= x and x < 360:
+				self.button7_push()
 			
 		else:
 			pass
