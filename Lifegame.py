@@ -134,6 +134,7 @@ class PartsFloat(SpriteNode):
 		#set parameter
 		self.mirror = ''
 		self.data_object = data_object
+		self.degree= 0
 		
 		#draw object
 		self.blAddObject = LifegameObject.data2bool(data_object).astype(dtype=np.uint8)
@@ -182,10 +183,41 @@ class PartsFloat(SpriteNode):
 			**kwargs)
 		self.margin = self.size * 0.4
 		
+	def rotate_object(self, degAdd=0, **kwargs):
+		
+		self.degree = (self.degree + degAdd) % 360
+		print(str(self.degree))
+		
+		position = self.position
+		
+		self.remove_from_parent()
+				
+		#draw object
+		self.blAddObject = LifegameObject.data2bool(\
+		self.data_object,
+		rotate=self.degree,
+		mirror=self.mirror).astype(dtype=np.uint8)
+		
+		part_img = Image.fromarray((1 - self.blAddObject) * 128 + 63)
+		part_img.show()
+		pilimgfile = io.BytesIO()
+		part_img.save(pilimgfile, format='png')
+		bytes_img = pilimgfile.getvalue()
+		uiimg = ui.Image.from_data(bytes_img)
+		texture = Texture(uiimg)
+		SpriteNode.__init__(self,
+			texture,
+			position=position,
+			z_position=1,
+			**kwargs)
+		
+		self.margin = self.size * 0.4
+		
+		
 	def move_position(self, pos_move):
 		self.position = self.position + pos_move
 	
-		
+	
 class MyScene(Scene):
 	
 	def setup(self):
@@ -411,7 +443,7 @@ class MyScene(Scene):
 		self.parts_node.reverse_h(parent=self)
 	
 	def button6_push(self):
-		pass
+		self.parts_node.rotate_object(parent=self,degAdd=90)
 		
 	def button7_push(self):
 		
