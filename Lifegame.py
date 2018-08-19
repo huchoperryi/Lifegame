@@ -186,8 +186,7 @@ class PartsFloat(SpriteNode):
 	def rotate_object(self, degAdd=0, **kwargs):
 		
 		self.degree = (self.degree + degAdd) % 360
-		print(str(self.degree))
-		
+
 		position = self.position
 		
 		self.remove_from_parent()
@@ -199,7 +198,7 @@ class PartsFloat(SpriteNode):
 		mirror=self.mirror).astype(dtype=np.uint8)
 		
 		part_img = Image.fromarray((1 - self.blAddObject) * 128 + 63)
-		part_img.show()
+		
 		pilimgfile = io.BytesIO()
 		part_img.save(pilimgfile, format='png')
 		bytes_img = pilimgfile.getvalue()
@@ -405,6 +404,11 @@ class MyScene(Scene):
 			anchor_point=(0.5,0.5),
 			position=(337,25),
 			parent=self)
+	
+	def partsPosDisp(self):
+		
+		self.posPartX.text = str(self.parts_node.position.x)
+		self.posPartY.text = str(self.parts_node.position.y - self.intLowerMargin)
 		
 	def button0_push(self):
 		
@@ -427,18 +431,17 @@ class MyScene(Scene):
 		if self.modeEdit == True:
 			#self.parts_node.position = self.parts_node.position + (-1, 0)
 			self.parts_node.move_position((-1, 0))
-		self.posPartX.text = str(self.parts_node.position.x)
-		self.posPartY.text = str(self.parts_node.position.y - self.intLowerMargin)
+		self.partsPosDisp()
 	
 	def button2_push(self):
 		self.parts_node.move_position((0, -1))
-	
+		self.partsPosDisp()
 	def button3_push(self):
 		self.parts_node.move_position((0, 1))
-	
+		self.partsPosDisp()
 	def button4_push(self):
 		self.parts_node.move_position((2, 0))
-	
+		self.partsPosDisp()
 	def button5_push(self):
 		self.parts_node.reverse_h(parent=self)
 	
