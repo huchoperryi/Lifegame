@@ -221,7 +221,7 @@ class MyScene(Scene):
 	
 	def setup(self):
 		# Set parameter
-		self.flgStop = False
+		self.flgStop = True
 		self.intLowerMargin = 50
 		self.intUpperMargin = 150
 		self.modeEdit = False
@@ -394,7 +394,7 @@ class MyScene(Scene):
 			
 		self.btn7Bak = ShapeNode(
 			path=ui.Path.rounded_rect(0,0,44,50,5),
-			fill_color='#a0a0a0',
+			fill_color='#c4e6ff',
 			anchor_point=(0.5,0.5),
 			position=(337,25),
 			parent=self)
@@ -463,6 +463,8 @@ class MyScene(Scene):
 			self.btn5Bak.fill_color='#a0a0a0'
 			self.btn6Bak.fill_color='#a0a0a0'
 			self.btn7Bak.fill_color='#a0a0a0'
+			
+		self.flgStop = not self.flgStop
 	
 	def update(self):
 		if not(self.flgStop):
