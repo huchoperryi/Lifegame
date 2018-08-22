@@ -126,6 +126,33 @@ class LifegameField():
 		(0,0,0,0,0,0,0,0,0,0, 0,0,0,1,1,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0),
 		(0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0))
 
+class BaseButton(SpriteNode):
+	
+	
+	
+	def __init__(self, intId, bgcolor, strSymbol):
+		
+		width = 45
+		height = 50
+		r = 5
+		margin = 1
+		
+		self.bak = ShapeNode(\
+			path = ui.Path.rounded_rect(\
+				0,0,
+				width - margin, height,
+				r),
+			color=bgcolor,
+			anchor_point=(0,0),
+			position=(intId * width, 0),
+			parent=self)
+			
+		self.Symbol = SpriteNode(
+			strSymbol,
+			anchor_point=(0.5,0.5),
+			position=(intId * width + (width - margin) / 2,height /2),
+			z_position=1.0,
+			parent=self)
 
 class PartsFloat(SpriteNode):
 	
@@ -295,116 +322,24 @@ class MyScene(Scene):
 			parent=self)
 		
 		#add control areas
-		self.btn0Bak = ShapeNode(
-			path=ui.Path.rounded_rect(0,0,44,50,5),
-			color='#c4e6ff',
-			anchor_point=(0.5,0.5),
-			position=(22,25),
-			parent=self)
 		
-		self.btn0Symbol = SpriteNode(
-			'iob:settings_32',
-			anchor_point=(0.5,0.5),
-			position=(22,25),
-			z_position=1.0,
-			parent=self)
+		paras = (\
+			(0, '#c4e6ff', 'iob:settings_32'),
+			(1, '#a0a0a0', 'iob:arrow_left_a_32'),
+			(2, '#a0a0a0', 'iob:arrow_down_a_32'),
+			(3, '#a0a0a0', 'iob:arrow_up_a_32'),
+			(4, '#a0a0a0', 'iob:arrow_right_a_32'),
+			(5, '#a0a0a0', 'iob:arrow_swap_32'),
+			(6, '#a0a0a0', 'iob:ios7_undo_32'),
+			(7, '#a0a0a0', 'iob:arrow_right_b_32'))
+		self.btnBase = []
 		
-		self.btn1Bak = ShapeNode(
-			path=ui.Path.rounded_rect(0,0,44,50,5),
-			fill_color='#a0a0a0',
-			anchor_point=(0.5,0.5),
-			position=(67,25),
-			parent=self)
+		for para in paras:
+			self.btn = BaseButton(*para)
+			self.add_child(self.btn)
+			self.btnBase.append(self.btn)
+			#self.add_child(self.btn0)
 		
-		self.btn1Symbol = SpriteNode(
-			'iob:arrow_left_a_32',
-			anchor_point=(0.5,0.5),
-			position=(67,25),
-			z_position=1.0,
-			parent=self)
-			
-		self.btn2Bak = ShapeNode(
-			path=ui.Path.rounded_rect(0,0,44,50,5),
-			fill_color='#a0a0a0',
-			anchor_point=(0.5,0.5),
-			position=(112,25),
-			parent=self)
-			
-		self.btn2Symbol = SpriteNode(
-			'iob:arrow_down_a_32',
-			anchor_point=(0.5,0.5),
-			position=(112,25),
-			z_position=1.0,
-			parent=self)
-		
-		self.btn3Bak = ShapeNode(
-			path=ui.Path.rounded_rect(0,0,44,50,5),
-			fill_color='#a0a0a0',
-			anchor_point=(0.5,0.5),
-			position=(157,25),
-			parent=self)
-			
-		self.btn3Symbol = SpriteNode(
-			'iob:arrow_up_a_32',
-			anchor_point=(0.5,0.5),
-			position=(157,25),
-			z_position=1.0,
-			parent=self)
-		
-		self.btn4Bak = ShapeNode(
-			path=ui.Path.rounded_rect(0,0,44,50,5),
-			fill_color='#a0a0a0',
-			anchor_point=(0.5,0.5),
-			position=(202,25),
-			parent=self)
-			
-		self.btn4Symbol = SpriteNode(
-			'iob:arrow_right_a_32',
-			anchor_point=(0.5,0.5),
-			position=(202,25),
-			z_position=1.0,
-			parent=self)
-		
-		self.btn5Bak = ShapeNode(
-			path=ui.Path.rounded_rect(0,0,44,50,5),
-			fill_color='#a0a0a0',
-			anchor_point=(0.5,0.5),
-			position=(247,25),
-			parent=self)
-		
-		self.btn5Symbol = SpriteNode(
-			'iob:arrow_swap_32',
-			anchor_point=(0.5,0.5),
-			position=(247,25),
-			z_position=1.0,
-			parent=self)
-			
-		self.btn6Bak = ShapeNode(
-			path=ui.Path.rounded_rect(0,0,44,50,5),
-			fill_color='#a0a0a0',
-			anchor_point=(0.5,0.5),
-			position=(292,25),
-			parent=self)
-		
-		self.btn6Symbol = SpriteNode(
-			'iob:ios7_undo_32',
-			anchor_point=(0.5,0.5),
-			position=(292,25),
-			parent=self)
-			
-		self.btn7Bak = ShapeNode(
-			path=ui.Path.rounded_rect(0,0,44,50,5),
-			fill_color='#c4e6ff',
-			anchor_point=(0.5,0.5),
-			position=(337,25),
-			parent=self)
-		
-		self.btn7Symbol = SpriteNode(
-			'iob:arrow_right_b_32',
-			anchor_point=(0.5,0.5),
-			position=(337,25),
-			parent=self)
-	
 	def partsPosDisp(self):
 		
 		self.posPartX.text = str(self.parts_node.position.x)
@@ -418,13 +353,9 @@ class MyScene(Scene):
 		self.parts_node = PartsFloat(LifegameObject.Glidergun, parent=self)
 		self.modeEdit = True
 				
-		self.btn1Bak.fill_color='#c4e6ff'
-		self.btn2Bak.fill_color='#c4e6ff'
-		self.btn3Bak.fill_color='#c4e6ff'
-		self.btn4Bak.fill_color='#c4e6ff'
-		self.btn5Bak.fill_color='#c4e6ff'
-		self.btn6Bak.fill_color='#c4e6ff'
-		self.btn7Bak.fill_color='#c4e6ff'
+		for i in range(6):
+			self.btnBase[i + 1].bak.color = '#c4e6ff'
+			
 		
 	def button1_push(self):
 		
@@ -455,14 +386,8 @@ class MyScene(Scene):
 			self.modeEdit = False
 			self.flgStop = False
 			self.field.mySetObject(self.parts_node.position[0],self.parts_node.position[1] - self.intLowerMargin, self.parts_node.blAddObject)
-			
-			self.btn1Bak.fill_color='#a0a0a0'
-			self.btn2Bak.fill_color='#a0a0a0'
-			self.btn3Bak.fill_color='#a0a0a0'
-			self.btn4Bak.fill_color='#a0a0a0'
-			self.btn5Bak.fill_color='#a0a0a0'
-			self.btn6Bak.fill_color='#a0a0a0'
-			self.btn7Bak.fill_color='#a0a0a0'
+		for i in range(6):
+			self.btnBase[i + 1].bak.color = '#a0a0a0'
 			
 		self.flgStop = not self.flgStop
 	
