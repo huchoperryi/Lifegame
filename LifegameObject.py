@@ -83,9 +83,10 @@ def show_data(booldata):
 		pil_image.show()
 		
 if __name__ == '__main__': 
-	data = Glidergun
+	data = Glider
+	print(data)
 	data_bool = data2bool(data)
-	#print(data_bool)
+	print(data_bool)
 	show_data(data_bool)
 	data_bool = data2bool(data, rotate=90)
 	show_data(data_bool)
