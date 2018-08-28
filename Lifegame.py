@@ -5,7 +5,7 @@ from PIL import Image
 import ui, io
 from time import sleep
 
-import LifegameObject
+from LifegameObject import data2bool, lifegame_object
 
 class LifegameField():
 
@@ -87,7 +87,7 @@ class LifegameField():
 				self.field[orgY - lenY + j][orgX + i] = \
 					object[j][i]
 
-
+	'''
 	def myGlider(self):
 
 		return ((0,1,0),
@@ -125,35 +125,84 @@ class LifegameField():
 		(0,0,0,0,0,0,0,0,0,0, 0,0,1,0,0,0,1,0,0,0, 0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0),
 		(0,0,0,0,0,0,0,0,0,0, 0,0,0,1,1,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0),
 		(0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0))
-
-class BaseButton(SpriteNode):
+	'''
 	
+class button(ShapeNode):
 	
-	
-	def __init__(self, intId, bgcolor, strSymbol):
+	def __init__(self, pos_btn, w, h, 
+		btn_color='#c4e6ff',
+		str_text='', str_symbol=''):
 		
-		width = 45
-		height = 50
+		super().__init__(
+			path=ui.Path.rounded_rect(0,0,w,h,5),
+			anchor_point=(0,0),
+			color=btn_color,
+			position=pos_btn
+			)
+		
+		if str_text != '':
+			self.Label = LabelNode(
+				str_text,
+				anchor_point=(0,0.5),
+				position=(5,h / 2),
+				color='black',
+				parent=self
+				)
+		
+		if str_symbol != '':
+			self.symbol = SpriteNode(
+				str_symbol,
+				position=(w / 2, h / 2),
+				parent=self)
+
+
+def BaseButton(intId, bgcolor, strSymbol):
+	
+	width = 45
+	height = 50
+	margin = 1
+	
+	_button = button(
+		(intId * width, 0),
+		width-margin,
+		height,
+		btn_color=bgcolor,
+		str_text='',
+		str_symbol=strSymbol)
+		
+	return _button
+	
+	
+class btnObjectSelect(SpriteNode):
+	
+	def __init__(self, intId, bgcolor='#a0a0a0', strLabel='test'):
+		width = 300
+		height = 40
 		r = 5
 		margin = 1
+		label_size = 25
 		
 		self.bak = ShapeNode(\
 			path = ui.Path.rounded_rect(\
-				0,0,
-				width - margin, height,
-				r),
+			0,0,
+			width, height - margin,
+			r),
 			color=bgcolor,
 			anchor_point=(0,0),
-			position=(intId * width, 0),
+			position=(0, intId * height + 50),
+			z_position=1,
+			parent=self)
+		
+		self.strLabel = LabelNode(
+			strLabel,
+			font=('Helvetica', label_size),
+			anchor_point=(0,0.5),
+			position=(10, intId * height + 50 + height / 2),
+			z_position=5,
+			color='black',
 			parent=self)
 			
-		self.Symbol = SpriteNode(
-			strSymbol,
-			anchor_point=(0.5,0.5),
-			position=(intId * width + (width - margin) / 2,height /2),
-			z_position=1.0,
-			parent=self)
-
+		
 class PartsFloat(SpriteNode):
 	
 	def __init__(self, data_object, **kwargs):
@@ -164,7 +213,7 @@ class PartsFloat(SpriteNode):
 		self.degree= 0
 		
 		#draw object
-		self.blAddObject = LifegameObject.data2bool(data_object).astype(dtype=np.uint8)
+		self.blAddObject = data2bool(data_object).astype(dtype=np.uint8)
 		part_img = Image.fromarray((1 - self.blAddObject) * 128 + 63)
 		pilimgfile = io.BytesIO()
 		part_img.save(pilimgfile, format='png')
@@ -175,7 +224,7 @@ class PartsFloat(SpriteNode):
 			texture,
 			position=(100,100),
 			anchor_point=(0,0),
-			z_position=1,
+			z_position=-1,
 			**kwargs)
 		self.margin = self.size * 0.4
 	
@@ -195,7 +244,7 @@ class PartsFloat(SpriteNode):
 			print('mirror parameter error ', self.mirror)
 				
 		#draw object
-		self.blAddObject = LifegameObject.data2bool(self.data_object,mirror=self.mirror).astype(dtype=np.uint8)
+		self.blAddObject = data2bool(self.data_object,mirror=self.mirror).astype(dtype=np.uint8)
 		
 		part_img = Image.fromarray((1 - self.blAddObject) * 128 + 63)
 		pilimgfile = io.BytesIO()
@@ -219,7 +268,7 @@ class PartsFloat(SpriteNode):
 		self.remove_from_parent()
 				
 		#draw object
-		self.blAddObject = LifegameObject.data2bool(\
+		self.blAddObject = data2bool(\
 		self.data_object,
 		rotate=self.degree,
 		mirror=self.mirror).astype(dtype=np.uint8)
@@ -252,9 +301,12 @@ class MyScene(Scene):
 		self.intLowerMargin = 50
 		self.intUpperMargin = 150
 		self.modeEdit = False
+		self.flgObjectSelectButton = False
+		self.ObjectSelectButtons = []
 		self.field = LifegameField(self.size.x, self.size.y - self.intLowerMargin - self.intUpperMargin)
 
-		self.field.mySetObject(180,330,self.field.myAcorn())
+		#self.field.mySetObject(180,330,self.field.myAcorn())
+		self.field.mySetObject(180,330,data2bool(lifegame_object['Acorn']))
 		
 		#self.flgStop = True
 		#for i in range(300):
@@ -275,6 +327,7 @@ class MyScene(Scene):
 			texture,
 			anchor_point=(0,0),
 			position=(0, self.intLowerMargin),
+			z_position=-2,
 			parent=self)
 		
 		# add labels
@@ -347,14 +400,49 @@ class MyScene(Scene):
 		
 	def button0_push(self):
 		
-		self.modeEdit = True
+		self.modeEdit = not self.modeEdit
 		self.flgStop = True
+		'''
 		#draw object
-		self.parts_node = PartsFloat(LifegameObject.Glidergun, parent=self)
-		self.modeEdit = True
-				
+		self.parts_node = PartsFloat(lifegame_object['Glidergun'], parent=self)
+		'''
 		for i in range(6):
-			self.btnBase[i + 1].bak.color = '#c4e6ff'
+			self.btnBase[i + 1].color = '#c4e6ff'
+		
+		if self.flgObjectSelectButton == False:
+			paras = (\
+				(0, '#0000ff', 'one'),
+				(1, '#0000ff', 'two'),
+				(2, '#c4e6ff', 'three'),
+				(3, '#c4e6ff', 'four'),
+				(4, '#c4e6ff', 'five'),
+				(5, '#c4e6ff', 'six'),
+				(6, '#c4e6ff', 'seven'),
+				(7, '#c4e6ff', 'eight'),
+				(8, '#c4e6ff', 'nine'),
+				(9, '#c4e6ff', 'ten'),
+				(10, '#c4e6ff', 'eleven'),
+				(11, '#c4e6ff', 'twelve'))
+			
+			for para in paras:
+				self.btnObjSlct = btnObjectSelect(*para)
+				self.add_child(self.btnObjSlct)
+				self.ObjectSelectButtons.append(self.btnObjSlct)
+				
+			#self.flgOjectSelectButton = True
+			self.flgObjectSelectButton = True
+			
+		else:
+			
+			for btn in self.ObjectSelectButtons:
+				btn.bak.remove_from_parent()
+				btn.strLabel.remove_from_parent()
+				#btn.removefromparent()
+				#self.ObjectSelectButtons.remove(btn)
+				
+			self.ObjectSelectButtons =[]
+				
+			self.flgObjectSelectButton = False
 			
 		
 	def button1_push(self):
@@ -387,7 +475,7 @@ class MyScene(Scene):
 			self.flgStop = False
 			self.field.mySetObject(self.parts_node.position[0],self.parts_node.position[1] - self.intLowerMargin, self.parts_node.blAddObject)
 		for i in range(6):
-			self.btnBase[i + 1].bak.color = '#a0a0a0'
+			self.btnBase[i + 1].color = '#a0a0a0'
 			
 		self.flgStop = not self.flgStop
 	
@@ -407,11 +495,14 @@ class MyScene(Scene):
 
 		# SpriteNodeを使い、スクリーンに追加する
 		#self.field_node = SpriteNode(texture, position=self.size/2)
+		
 		self.field_node = SpriteNode(
 			texture,
 			anchor_point=(0,0),
 			position=(0, self.intLowerMargin),
+			z_position=-2,
 			parent=self)
+		
 		#print(self.field.gen)
 		#print(self.field.gen)
 		
@@ -435,7 +526,7 @@ class MyScene(Scene):
 				self.field.mySetObject(self.parts_node.position[0],self.parts_node.position[1] - self.intLowerMargin, self.parts_node.blAddObject)
 				'''
 			
-			if x < 45 and self.modeEdit == False:
+			if x < 45:
 				
 				self.button0_push()
 				
