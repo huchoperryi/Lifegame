@@ -304,6 +304,8 @@ class MyScene(Scene):
 		self.flgObjectSelectButton = False
 		self.ObjectSelectButtons = []
 		self.field = LifegameField(self.size.x, self.size.y - self.intLowerMargin - self.intUpperMargin)
+		self.mode = 'pause'
+		# pause, run, edit, edit_select
 
 		#self.field.mySetObject(180,330,self.field.myAcorn())
 		self.field.mySetObject(180,330,data2bool(lifegame_object['Acorn']))
@@ -400,40 +402,53 @@ class MyScene(Scene):
 		
 	def button0_push(self):
 		
+		'''
 		self.modeEdit = not self.modeEdit
 		self.flgStop = True
-		'''
+		
 		#draw object
 		self.parts_node = PartsFloat(lifegame_object['Glidergun'], parent=self)
 		'''
-		for i in range(6):
-			self.btnBase[i + 1].color = '#c4e6ff'
+		print(self.mode)
 		
-		if self.flgObjectSelectButton == False:
-			paras = (\
-				(0, '#0000ff', 'one'),
-				(1, '#0000ff', 'two'),
-				(2, '#c4e6ff', 'three'),
-				(3, '#c4e6ff', 'four'),
-				(4, '#c4e6ff', 'five'),
-				(5, '#c4e6ff', 'six'),
-				(6, '#c4e6ff', 'seven'),
-				(7, '#c4e6ff', 'eight'),
-				(8, '#c4e6ff', 'nine'),
-				(9, '#c4e6ff', 'ten'),
-				(10, '#c4e6ff', 'eleven'),
-				(11, '#c4e6ff', 'twelve'))
+		if self.mode == 'pause' or self.mode == 'run':
 			
-			for para in paras:
-				self.btnObjSlct = btnObjectSelect(*para)
-				self.add_child(self.btnObjSlct)
-				self.ObjectSelectButtons.append(self.btnObjSlct)
+			for i in range(6):
+				self.btnBase[i + 1].color = '#c4e6ff'
+			
+			if self.flgObjectSelectButton == False:
+				color = '#4ee6ff'
+				paras = (\
+					(0, color, ''),
+					(1, color, ''),
+					(2, color, ''),
+					(3, color, ''),
+					(4, color, ''),
+					(5, color, ''),
+					(6, color, ''),
+					(7, color, ''),
+					(8, color, ''),
+					(9, color, ''),
+					(10, color, ''),
+					(11, color, ''))
 				
-			#self.flgOjectSelectButton = True
-			self.flgObjectSelectButton = True
+				for para in paras:
+					self.btnObjSlct = btnObjectSelect(*para)
+					self.add_child(self.btnObjSlct)
+					self.ObjectSelectButtons.append(self.btnObjSlct)
+				
+				object_list = list(lifegame_object.keys())
+				
+				for i in range(len(object_list)):
+					self.ObjectSelectButtons[i].strLabel.text = object_list[i]
+				
+				#self.flgOjectSelectButton = True
+				self.flgObjectSelectButton = True
+				
+			self.mode = 'edit_select'
 			
-		else:
-			
+		elif self.mode == 'edit_select':
+			print('pass')
 			for btn in self.ObjectSelectButtons:
 				btn.bak.remove_from_parent()
 				btn.strLabel.remove_from_parent()
@@ -443,7 +458,7 @@ class MyScene(Scene):
 			self.ObjectSelectButtons =[]
 				
 			self.flgObjectSelectButton = False
-			
+			self.mode = 'pause'
 		
 	def button1_push(self):
 		
@@ -469,16 +484,16 @@ class MyScene(Scene):
 		
 	def button7_push(self):
 		
-		if self.modeEdit == True:
-			self.parts_node.remove_from_parent()
-			self.modeEdit = False
+		if self.mode == 'pause':
 			self.flgStop = False
-			self.field.mySetObject(self.parts_node.position[0],self.parts_node.position[1] - self.intLowerMargin, self.parts_node.blAddObject)
-		for i in range(6):
-			self.btnBase[i + 1].color = '#a0a0a0'
+			self.mode = 'run'
 			
-		self.flgStop = not self.flgStop
-	
+	def selectbutton_push(self, x, y):
+		
+		button_h = self.ObjectSelectButtons[0].height
+		int_button = (y - 50) / button_h
+		print(int_button)
+		
 	def update(self):
 		if not(self.flgStop):
 			self.field_node.remove_from_parent()
@@ -551,16 +566,23 @@ class MyScene(Scene):
 			elif 315 <= x and x < 360:
 				self.button7_push()
 			
+		elif y < 500:
+			
+			if x < 300:
+				if self.mode == 'edit_select':
+					self.selectbutton_push(x, y)
+					print('selectbutton')
+				
 		else:
 			pass
 			
-		if self.modeEdit == True:
+		if self.mode == 'edit':
 			self.partsBase = self.parts_node.position
 			self.touchBase = touch.location
 			
 
 	def touch_moved(self, touch):
-		if self.modeEdit == True:
+		if self.mode == 'edit':
 			touchMoved = touch.location
 		
 			d = touchMoved - self.touchBase
