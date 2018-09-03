@@ -297,7 +297,9 @@ class MyScene(Scene):
 	
 	def setup(self):
 		# Set parameter
+
 		self.flgStop = True
+
 		self.intLowerMargin = 50
 		self.intUpperMargin = 150
 		self.modeEdit = False
@@ -325,6 +327,7 @@ class MyScene(Scene):
 
 		# SpriteNodeを使い、スクリーンに追加する
 		#self.field_node = SpriteNode(texture, position=self.size/2)
+
 		self.field_node = SpriteNode(
 			texture,
 			anchor_point=(0,0),
@@ -334,6 +337,7 @@ class MyScene(Scene):
 		
 		# add labels
 		self.lblGen = LabelNode(
+
 			str(self.field.gen),
 			font=('Helvetica', 12),
 			anchor_point=(0,0),
@@ -341,7 +345,9 @@ class MyScene(Scene):
 			color='blue',
 			parent=self)
 		
+
 		self.lblPoplation = LabelNode(
+
 			str(self.field.field.sum()),
 			font=('Helvetica', 12),
 			anchor_point=(0,0),
@@ -350,8 +356,9 @@ class MyScene(Scene):
 			color='blue',
 			parent=self
 			)
-		
+
 		self.lblMsg = LabelNode(
+
 			str(self.size[0]) + ':' + str(self.size[1]), font=('Helvetica', 12),
 			anchor_point=(0,0),
 			position=(180,0),
@@ -374,6 +381,7 @@ class MyScene(Scene):
 			position=(50,15),
 			z_position=2,
 			color='blue',
+
 			parent=self)
 		
 		#add control areas
@@ -488,12 +496,14 @@ class MyScene(Scene):
 			self.flgStop = False
 			self.mode = 'run'
 			
+
 	def selectbutton_push(self, x, y):
 		
 		button_h = self.ObjectSelectButtons[0].height
 		int_button = (y - 50) / button_h
 		print(int_button)
 		
+
 	def update(self):
 		if not(self.flgStop):
 			self.field_node.remove_from_parent()
@@ -532,6 +542,7 @@ class MyScene(Scene):
 		
 		if y < 50:
 			if self.size.x - 50 < x :
+
 				
 				pass
 				'''
@@ -544,6 +555,7 @@ class MyScene(Scene):
 			if x < 45:
 				
 				self.button0_push()
+
 				
 			elif 45 < x and x < 90:
 				self.button1_push()
