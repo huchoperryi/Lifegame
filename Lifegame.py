@@ -4,6 +4,7 @@ from scene import *
 from PIL import Image
 import ui, io
 from time import sleep
+import math
 
 from LifegameObject import data2bool, lifegame_object
 
@@ -133,13 +134,14 @@ class button(ShapeNode):
 		btn_color='#c4e6ff',
 		str_text='', str_symbol=''):
 		
+		#set button base
 		super().__init__(
 			path=ui.Path.rounded_rect(0,0,w,h,5),
 			anchor_point=(0,0),
 			color=btn_color,
 			position=pos_btn
 			)
-		
+		#set text on button
 		if str_text != '':
 			self.Label = LabelNode(
 				str_text,
@@ -148,7 +150,7 @@ class button(ShapeNode):
 				color='black',
 				parent=self
 				)
-		
+		#set symbol on button
 		if str_symbol != '':
 			self.symbol = SpriteNode(
 				str_symbol,
@@ -386,7 +388,7 @@ class MyScene(Scene):
 			(4, '#a0a0a0', 'iob:arrow_right_a_32'),
 			(5, '#a0a0a0', 'iob:arrow_swap_32'),
 			(6, '#a0a0a0', 'iob:ios7_undo_32'),
-			(7, '#a0a0a0', 'iob:arrow_right_b_32'))
+			(7, '#c4e6ff', 'iob:arrow_right_b_32'))
 		self.btnBase = []
 		
 		for para in paras:
@@ -409,12 +411,8 @@ class MyScene(Scene):
 		#draw object
 		self.parts_node = PartsFloat(lifegame_object['Glidergun'], parent=self)
 		'''
-		print(self.mode)
 		
-		if self.mode == 'pause' or self.mode == 'run':
-			
-			for i in range(6):
-				self.btnBase[i + 1].color = '#c4e6ff'
+		if self.mode == 'pause':
 			
 			if self.flgObjectSelectButton == False:
 				color = '#4ee6ff'
@@ -445,10 +443,10 @@ class MyScene(Scene):
 				#self.flgOjectSelectButton = True
 				self.flgObjectSelectButton = True
 				
-			self.mode = 'edit_select'
+			self.change_mode('edit_select')
 			
 		elif self.mode == 'edit_select':
-			print('pass')
+			
 			for btn in self.ObjectSelectButtons:
 				btn.bak.remove_from_parent()
 				btn.strLabel.remove_from_parent()
@@ -458,8 +456,16 @@ class MyScene(Scene):
 			self.ObjectSelectButtons =[]
 				
 			self.flgObjectSelectButton = False
-			self.mode = 'pause'
-		
+			self.change_mode('pause')
+			
+		elif self.mode == 'edit':
+			
+			self.parts_node.remove_from_parent()
+			self.modeEdit = False
+			self.flgStop = False
+			self.field.mySetObject(self.parts_node.position[0],self.parts_node.position[1] - self.intLowerMargin, self.parts_node.blAddObject)
+			self.change_mode('pause')
+			
 	def button1_push(self):
 		
 		if self.modeEdit == True:
@@ -485,17 +491,97 @@ class MyScene(Scene):
 	def button7_push(self):
 		
 		if self.mode == 'pause':
-			self.flgStop = False
-			self.mode = 'run'
+			#self.flgStop = False
+			self.change_mode('run')
+			
+		elif self.mode == 'run':
+			self.change_mode('pause')
 			
 	def selectbutton_push(self, x, y):
 		
-		button_h = self.ObjectSelectButtons[0].height
-		int_button = (y - 50) / button_h
-		print(int_button)
+		int_button = math.floor((y - 50) / 40)
+		
+		self.parts_node = PartsFloat(lifegame_object[list(lifegame_object.keys())[int_button]], parent=self)
+		
+		for btn in self.ObjectSelectButtons:
+				btn.bak.remove_from_parent()
+				btn.strLabel.remove_from_parent()
+				
+		self.ObjectSelectButtons =[]
+		
+		self.flgObjectSelectButton = False
+		self.change_mode('edit')
+
+	def change_mode(self, mode):
+		
+		able = '#c4e6ff'
+		enable = '#a0a0a0'
+		
+		if mode == 'run':
+			
+			self.btnBase[0].color = enable
+			self.btnBase[1].color = enable
+			self.btnBase[2].color = enable
+			self.btnBase[3].color = enable
+			self.btnBase[4].color = enable
+			self.btnBase[5].color = enable
+			self.btnBase[6].color = enable
+			self.btnBase[7].color = able
+			
+			self.btnBase[7].symbol.texture = Texture('iob:pause_32')
+			
+			self.mode = 'run'
+			
+		elif mode == 'pause':
+			
+			self.btnBase[0].color = able
+			self.btnBase[1].color = enable
+			self.btnBase[2].color = enable
+			self.btnBase[3].color = enable
+			self.btnBase[4].color = enable
+			self.btnBase[5].color = enable
+			self.btnBase[6].color = enable
+			self.btnBase[7].color = able
+			
+			self.btnBase[7].symbol.texture = Texture('iob:arrow_right_b_32')
+			
+			self.mode = 'pause'
+			
+		elif mode == 'edit_select':
+			
+			self.btnBase[0].color = able
+			self.btnBase[1].color = enable
+			self.btnBase[2].color = enable
+			self.btnBase[3].color = enable
+			self.btnBase[4].color = enable
+			self.btnBase[5].color = enable
+			self.btnBase[6].color = enable
+			self.btnBase[7].color = enable
+			
+			self.mode = 'edit_select'
+			
+		elif mode == 'edit':
+			
+			self.btnBase[0].color = able
+			self.btnBase[1].color = able
+			self.btnBase[2].color = able
+			self.btnBase[3].color = able
+			self.btnBase[4].color = able
+			self.btnBase[5].color = able
+			self.btnBase[6].color = able
+			self.btnBase[7].color = enable
+			
+			self.mode = 'edit'
+			
+		else:
+			
+			print('mode change wrong mode')
+		
+		self.lblMsg.text = 'Mode: ' + self.mode
 		
 	def update(self):
-		if not(self.flgStop):
+		if self.mode == 'run':
+			
 			self.field_node.remove_from_parent()
 
 			self.field.field = self.field.update()
@@ -571,7 +657,7 @@ class MyScene(Scene):
 			if x < 300:
 				if self.mode == 'edit_select':
 					self.selectbutton_push(x, y)
-					print('selectbutton')
+					
 				
 		else:
 			pass
