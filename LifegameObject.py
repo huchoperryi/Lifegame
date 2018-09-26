@@ -115,8 +115,10 @@ def show_data(booldata):
 		
 if __name__ == '__main__': 
 	data = lifegame_object['Glidergun']
+	
 	print(data)
 	data_bool = data2bool(data)
+	'''
 	print(data_bool)
 	show_data(data_bool)
 	data_bool = data2bool(data, rotate=90)
@@ -125,5 +127,11 @@ if __name__ == '__main__':
 	show_data(data_bool)
 	data_bool = data2bool(data, rotate=180, mirror='h')
 	show_data(data_bool)
+	'''
+	print(data_bool)
+	pil_image = Image.fromarray(np.uint8(data_bool)*255, mode='L')
+	pil_image.convert('1').show()
+	#pilimgfile = io.BytesIO()
+	pil_image.convert('1').save('./test.png', format='png')
 	#data_bool = data2bool(data, rotate=5)
 	#show_data(data_bool)

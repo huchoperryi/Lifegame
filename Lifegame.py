@@ -88,45 +88,6 @@ class LifegameField():
 				self.field[orgY - lenY + j][orgX + i] = \
 					object[j][i]
 
-	'''
-	def myGlider(self):
-
-		return ((0,1,0),
-						(0,0,1),
-						(1,1,1))
-
-	def myAcorn(self):
-
-		return ((0, 1, 0, 0, 0, 0, 0),
-						(0, 0, 0, 1, 0, 0, 0),
-						(1, 1, 0, 0, 1, 1, 1))
-
-	def myDieHard(self):
-
-		return ((0, 0, 0, 0, 0, 0, 0, 1, 0, 0),
-						(0, 1, 1, 0, 0, 0, 0, 0, 0, 0),
-						(0, 0, 1, 0, 0, 0, 1, 1, 1, 0))
-
-	def myRpentomino(self):
-
-		return ((0, 1, 1),
-						(1, 1, 0),
-						(0, 1, 0))
-
-	def myGridergun(self):
-		return(
-		(0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0),
-		(0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,1,0,0,0,0, 0,0,0,0,0,0,0,0),
-		(0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0, 0,0,0,1,0,1,0,0,0,0, 0,0,0,0,0,0,0,0),
-		(0,0,0,0,0,0,0,0,0,0, 0,0,0,1,1,0,0,0,0,0, 0,1,1,0,0,0,0,0,0,0, 0,0,0,0,0,1,1,0),
-		(0,0,0,0,0,0,0,0,0,0, 0,0,1,0,0,0,1,0,0,0, 0,1,1,0,0,0,0,0,0,0, 0,0,0,0,0,1,1,0),
-		(0,1,1,0,0,0,0,0,0,0, 0,1,0,0,0,0,0,1,0,0, 0,1,1,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0),
-		(0,1,1,0,0,0,0,0,0,0, 0,1,0,0,0,1,0,1,1,0, 0,0,0,1,0,1,0,0,0,0, 0,0,0,0,0,0,0,0),
-		(0,0,0,0,0,0,0,0,0,0, 0,1,0,0,0,0,0,1,0,0, 0,0,0,0,0,1,0,0,0,0, 0,0,0,0,0,0,0,0),
-		(0,0,0,0,0,0,0,0,0,0, 0,0,1,0,0,0,1,0,0,0, 0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0),
-		(0,0,0,0,0,0,0,0,0,0, 0,0,0,1,1,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0),
-		(0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0))
-	'''
 	
 class button(ShapeNode):
 	
@@ -235,7 +196,7 @@ class PartsFloat(SpriteNode):
 		position = self.position
 		
 		self.remove_from_parent()
-		
+		'''
 		if self.mirror == '':
 			self.mirror = 'h'
 			
@@ -244,9 +205,14 @@ class PartsFloat(SpriteNode):
 			
 		else:
 			print('mirror parameter error ', self.mirror)
-				
+		'''
+		
 		#draw object
-		self.blAddObject = data2bool(self.data_object,mirror=self.mirror).astype(dtype=np.uint8)
+		'''
+		self.blAddObject = data2bool(self.data_object,mirror='h').astype(dtype=np.uint8)
+		'''
+		#print(self.data_object)
+		self.blAddObject = self.blAddObject[:, ::-1]
 		
 		part_img = Image.fromarray((1 - self.blAddObject) * 128 + 63)
 		pilimgfile = io.BytesIO()
@@ -261,6 +227,8 @@ class PartsFloat(SpriteNode):
 			**kwargs)
 		self.margin = self.size * 0.4
 		
+		self.data_object = self.blAddObject
+		
 	def rotate_object(self, degAdd=0, **kwargs):
 		
 		self.degree = (self.degree + degAdd) % 360
@@ -270,10 +238,13 @@ class PartsFloat(SpriteNode):
 		self.remove_from_parent()
 				
 		#draw object
+		'''
 		self.blAddObject = data2bool(\
 		self.data_object,
 		rotate=self.degree,
 		mirror=self.mirror).astype(dtype=np.uint8)
+		'''
+		self.blAddObject = self.blAddObject.T[::-1]
 		
 		part_img = Image.fromarray((1 - self.blAddObject) * 128 + 63)
 		
@@ -310,13 +281,7 @@ class MyScene(Scene):
 		self.field = LifegameField(self.size.x, self.size.y - self.intLowerMargin - self.intUpperMargin)
 		self.mode = 'pause'
 		# pause, run, edit, edit_select
-
-		#self.field.mySetObject(180,330,self.field.myAcorn())
-		self.field.mySetObject(180,330,data2bool(lifegame_object['Acorn']))
-		
-		#self.flgStop = True
-		#for i in range(300):
-		#	self.field.field[250][25 + i] = True
+		#self.field.mySetObject(180,330,data2bool(lifegame_object['Acorn']))
 
 		#pil_img = Image.open('./grade.png')
 		pil_img = self.field.fieldImg()
