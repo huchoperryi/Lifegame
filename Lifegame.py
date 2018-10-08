@@ -177,7 +177,7 @@ class PartsFloat(SpriteNode):
 		
 		#draw object
 		self.blAddObject = data2bool(data_object).astype(dtype=np.uint8)
-		part_img = Image.fromarray((1 - self.blAddObject) * 128 + 63)
+		part_img = Image.fromarray((1 - self.blAddObject) * 255)
 		pilimgfile = io.BytesIO()
 		part_img.save(pilimgfile, format='png')
 		bytes_img = pilimgfile.getvalue()
@@ -214,7 +214,7 @@ class PartsFloat(SpriteNode):
 		#print(self.data_object)
 		self.blAddObject = self.blAddObject[:, ::-1]
 		
-		part_img = Image.fromarray((1 - self.blAddObject) * 128 + 63)
+		part_img = Image.fromarray((1 - self.blAddObject) * 255)
 		pilimgfile = io.BytesIO()
 		part_img.save(pilimgfile, format='png')
 		bytes_img = pilimgfile.getvalue()
@@ -246,7 +246,7 @@ class PartsFloat(SpriteNode):
 		'''
 		self.blAddObject = self.blAddObject.T[::-1]
 		
-		part_img = Image.fromarray((1 - self.blAddObject) * 128 + 63)
+		part_img = Image.fromarray((1 - self.blAddObject) * 255)
 		
 		pilimgfile = io.BytesIO()
 		part_img.save(pilimgfile, format='png')
