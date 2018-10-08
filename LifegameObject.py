@@ -29,7 +29,18 @@ lifegame_object = {
 	 '00000000000100000100000001000000000000',
 	 '00000000000010001000000000000000000000',
 	 '00000000000001100000000000000000000000',
-	 '00000000000000000000000000000000000000']
+	 '00000000000000000000000000000000000000'],
+	'BlankBox':
+	['1001001001',
+	 '0000000000',
+	 '0000000000',
+	 '1000000001',
+	 '0000000000',
+	 '0000000000',
+	 '1000000001',
+	 '0000000000',
+	 '0000000000',
+	 '1001001001']
 }
 
 Glider = \
@@ -116,7 +127,7 @@ def show_data(booldata):
 if __name__ == '__main__': 
 	data = lifegame_object['Glidergun']
 	
-	print(data)
+	#print(data)
 	data_bool = data2bool(data)
 	'''
 	print(data_bool)
@@ -128,8 +139,8 @@ if __name__ == '__main__':
 	data_bool = data2bool(data, rotate=180, mirror='h')
 	show_data(data_bool)
 	'''
-	print(data_bool)
-	pil_image = Image.fromarray(np.uint8(data_bool)*255, mode='L')
+	#print(data_bool)
+	pil_image = Image.fromarray((1-np.uint8(data_bool))*255, mode='L')
 	pil_image.convert('1').show()
 	#pilimgfile = io.BytesIO()
 	pil_image.convert('1').save('./test.png', format='png')
