@@ -1,6 +1,37 @@
 import numpy as np
 from PIL import Image
 
+lifegame_object = {
+	'Glider':
+	['010',
+	 '001',
+	 '111'],
+	'Acorn':
+	['0100000',
+	 '0001000',
+	 '1100111'],
+	'Diehard':
+	['0000000100',
+	 '0110000000',
+	 '0010001110'],
+	'Rpentomino':
+	['011',
+	 '110',
+	 '010'],
+	'Glidergun':
+	['00000000000000000000000000000000000000',
+	 '00000000000000000000000001000000000000',
+	 '00000000000000000000000101000000000000',
+	 '00000000000001100000011000000000000110',
+	 '00000000000010001000011000000000000110',
+	 '01100000000100000100011000000000000000',
+	 '01100000000100010110000101000000000000',
+	 '00000000000100000100000001000000000000',
+	 '00000000000010001000000000000000000000',
+	 '00000000000001100000000000000000000000',
+	 '00000000000000000000000000000000000000']
+}
+
 Glider = \
 	['010',
 	 '001',
@@ -83,9 +114,11 @@ def show_data(booldata):
 		pil_image.show()
 		
 if __name__ == '__main__': 
-	data = Glider
+	data = lifegame_object['Glidergun']
+	
 	print(data)
 	data_bool = data2bool(data)
+	'''
 	print(data_bool)
 	show_data(data_bool)
 	data_bool = data2bool(data, rotate=90)
@@ -94,5 +127,11 @@ if __name__ == '__main__':
 	show_data(data_bool)
 	data_bool = data2bool(data, rotate=180, mirror='h')
 	show_data(data_bool)
+	'''
+	print(data_bool)
+	pil_image = Image.fromarray(np.uint8(data_bool)*255, mode='L')
+	pil_image.convert('1').show()
+	#pilimgfile = io.BytesIO()
+	pil_image.convert('1').save('./test.png', format='png')
 	#data_bool = data2bool(data, rotate=5)
 	#show_data(data_bool)
