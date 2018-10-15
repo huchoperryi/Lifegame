@@ -432,20 +432,23 @@ class MyScene(Scene):
 			self.change_mode('pause')
 			
 	def button1_push(self):
-		
+		#move left
 		if self.modeEdit == True:
 			#self.parts_node.position = self.parts_node.position + (-1, 0)
 			self.parts_node.move_position((-1, 0))
 		self.partsPosDisp()
 	
 	def button2_push(self):
+		#move down
 		self.parts_node.move_position((0, -1))
 		self.partsPosDisp()
 	def button3_push(self):
+		#move up
 		self.parts_node.move_position((0, 1))
 		self.partsPosDisp()
 	def button4_push(self):
-		self.parts_node.move_position((2, 0))
+		#move right
+		self.parts_node.move_position((1, 0))
 		self.partsPosDisp()
 	def button5_push(self):
 		self.parts_node.reverse_h(parent=self)
